@@ -1,3 +1,8 @@
+## RECURSIVE RELATION FORMULATION
+
+# F(0) = F(1) = F(2) = 1
+# F(n) = F(n - 1) + F(n - 2) + F(n - 3)
+
 .data
 label1: .asciiz "Enter n: "
 output: .asciiz "Ans : "

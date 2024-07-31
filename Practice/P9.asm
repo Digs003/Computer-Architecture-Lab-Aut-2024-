@@ -1,18 +1,20 @@
+# Binary Search
+
 .data
-input_msg: .asciiz "Enter 8 integers in an array(non-decreasing): "
-invalid_msg: .asciiz "Array is not in non-decreasing order"
-msg1: .asciiz "Initial check passed.Array is sorted."
-search_input: .asciiz "Enter the number to search: "
-msg_found: .asciiz "Element found at index: "
-array: .space 32
+    in1:  .asciiz "Enter 8 integers in an array(non-decreasing): "
+    in2:  .asciiz "Enter the number to search: "
+    msg1: .asciiz "Initial check passed. Array is sorted."
+    msg2: .asciiz "Element found at index: "
+    invalid: .asciiz "Array is not in non-decreasing order"
+    array: .space 32
 
 .text
 .globl main
 main:
     jal get_array
     jal check_ascending
-    li $a0,10
-    li $v0,11
+    li $a0, 10
+    li $v0, 11
     syscall
     la $a0, msg1
     li $v0, 4
@@ -26,7 +28,7 @@ main:
 
 get_array:
     add $t0, $zero, $zero
-    la $a0, input_msg
+    la $a0, in1
     li $v0, 4
     syscall
     move $t1, $ra
@@ -34,7 +36,7 @@ get_array:
     jr $t1
 
 loop:
-    beq $t0,32,end_loop
+    beq $t0, 32, end_loop
     li $v0, 5
     syscall
     sw $v0, array($t0)
@@ -55,7 +57,7 @@ check_ascending:
         move $a0, $a1
         j Again
     invalid:
-        la $a0, invalid_msg
+        la $a0, invalid
         li $v0, 4
         syscall
         j exit
@@ -64,43 +66,49 @@ check_ascending:
 
 
 bin_search:
-    la $a0,search_input
-    li $v0,4
+    la $a0, in2
+    li $v0, 4
     syscall
-    li $v0,5
+
+    li $v0, 5
     syscall
-    move $s0,$v0
-    add $t0,$zero,$zero#lo
-    addi $t1,$zero,28#hi
-    addi $t2,$zero,-1#index of element to be searched
+    move $s0, $v0
+    li $t0, 0   # Left
+    li $t1, 28  # Right
+    li $t2, -1
+
     bin_loop:
-        bgt $t0,$t1,not_found
-        srl $t3,$t0,2
-        srl $t4,$t1,2 
-        add $t5,$t3,$t4
-        srl $t5,$t5,1#mid
-        sll $t5,$t5,2
-        lw $a1,array($t5)
-        beq $a1,$s0,success
-        blt $a1,$s0,inc_lo
+        bgt $t0, $t1, not_found
+        srl $t3, $t0, 2
+        srl $t4, $t1, 2 
+        add $t5, $t3, $t4
+
+        srl $t5, $t5, 1 # Mid
+        sll $t5, $t5, 2
+        lw $a1, array($t5)
+        beq $a1, $s0, success
+        blt $a1, $s0, inc_lo
         j dec_hi
     
     inc_lo:
-        addi $t0,$t5,4
+        addi $t0, $t5, 4
         j bin_loop
+
     dec_hi:
-        addi $t1,$t5,-4
+        addi $t1, $t5, -4
         j bin_loop
+
     success:
-        move $t2,$t5
-        srl $t2,$t2,2
-        la $a0,msg_found
-        li $v0,4
+        move $t2, $t5
+        srl $t2, $t2, 2
+        la $a0, msg_found
+        li $v0, 4
         syscall
-        move $a0,$t2
-        li $v0,1
+        move $a0, $t2
+        li $v0, 1
         syscall
         j exit
+
     not_found:
         la $a0,msg_found
         li $v0,4
@@ -109,7 +117,6 @@ bin_search:
         li $v0,1
         syscall
 
-   
 exit:
     li $v0, 10
     syscall
