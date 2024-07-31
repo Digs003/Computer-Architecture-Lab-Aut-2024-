@@ -13,7 +13,7 @@ msg4: .asciiz "Sorted array: "
 .text
 .globl main
 main:
-    la, $s1, k
+    la $s1, k
     lw $s0, 0($s1)
     la $a0, msg1
     li $v0, 4
@@ -49,7 +49,8 @@ inner_loop:
     lw $t8, 0($t6)
 
     ble $t5,$t8, no_swap
-    #swap
+
+swap:
     sub $t6,$t6,4
     sw $t8,0($t6)
     sw $t5,4($t6)
