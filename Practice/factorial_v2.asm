@@ -1,5 +1,3 @@
-# Recursive Code to find Factorial of a Number
-
 .data
     prompt: .asciiz "Input an integer x:\n"
     result: .asciiz "Fact(x) = "
@@ -35,6 +33,8 @@ factorial:
     # adjust stack pointer to store return address and argument
     
     addi    $sp, $sp, -8
+    
+    # save $s0 and $ra
     sw      $s0, 4($sp)
     sw      $ra, 0($sp)
     bne     $a0, 0, else
