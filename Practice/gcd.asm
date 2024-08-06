@@ -27,43 +27,39 @@ main:
 
     add $a0,$s0,$zero
     add $a1,$s1,$zero
-
-    slt $s3,$s0,$s1
-    beq $s3,$zero,swap_and_compute
     jal find_gcd
-    j print_array
-
-swap_and_compute:
-    add $a3,$a0,$zero
-    add $a0,$a1,$zero
-    add $a1,$a3,$zero
-    jal find_gcd
-    j print_array
-
-find_gcd:
-    addi $sp,$sp,-4
-    sw $ra,0($sp)
-    bne $a0,0,recursion
-    lw $ra,0($sp)
-    addi $sp,$sp,4
-    jr $ra
-
-recursion:
-    add $t0,$a0,$zero
-    rem $a0,$a1,$a0
-    add $a1,$t0,$zero
-    jal find_gcd
-    lw $ra,0($sp)
-    addi $sp,$sp,4
-    jr $ra
-
-print_array:
-    la $a0,output_msg 
-	li $v0,4  
-	syscall
-    move $a0,$a1
+    move $s0,$v0
+    la $a0,output_msg
+    li $v0,4
+    syscall
+    move $a0,$s0
     li $v0,1
     syscall
     li $v0,10
     syscall
+
+
+
+
+find_gcd:
+    addi $sp,$sp,-12
+    sw $ra,0($sp)
+    sw $a0,4($sp)
+    sw $a1,8($sp)
+    beq $a1,$zero,returna
+    div $a0,$a1
+    move $a0,$a1
+    mfhi $a1
+    jal find_gcd
+    lw $ra,0($sp)
+    lw $a0,4($sp)
+    lw $a1,8($sp)
+    addi $sp,$sp,12
+    jr $ra
+    returna:
+        move $v0,$a0
+        addi $sp,$sp,12
+        jr $ra
+
+
     
